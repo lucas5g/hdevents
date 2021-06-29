@@ -15,4 +15,14 @@
     @endif
 
     <p> {{ $nome }} </p>
+
+    @foreach ($arr as $item)
+        {{$item}}
+    @endforeach
+
+    <br>
+
+    @foreach ($names as $name)
+       {{$loop->index}} {{$name}} <br>
+    @endforeach
 </body>

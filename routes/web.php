@@ -18,7 +18,9 @@ Route::get('/', function () {
     return view('welcome', [
         'nome' => 'Matheus',
         'idade' => 28,
-        'profissao' => 'Programador'
+        'profissao' => 'Programador',
+        'arr' => [1,2,3,4,5],
+        'names' => ['Mathues', 'Maria', 'João', 'Saulo', 'Lucas']
     ]);
 });
 Route::get('/contact', function() {

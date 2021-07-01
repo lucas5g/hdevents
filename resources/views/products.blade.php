@@ -3,5 +3,11 @@
 @section('title', 'Produtos')
 
 @section('content')
-    <h1>Tela de produtos</h1>
+    @if ($id != null)
+        <h1>Exibindo o produto id: {{ $id }}</h1>
+    @endif
+
+    <p>
+        O usuário está buscando por: {{$busca}}
+    </p>
 @endsection

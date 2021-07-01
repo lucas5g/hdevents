@@ -1,4 +1,4 @@
-@extends('layout.main')
+@extends('layouts.main')
 
 @section('title', 'HDC Events')
 
@@ -6,6 +6,9 @@
 
 
     <h1>Algum título</h1>
+    @foreach ($names as $name)
+        {{$name}} <br>
+    @endforeach
     <img src="/img/banner.jpg" alt="Banner">
 
 @endsection

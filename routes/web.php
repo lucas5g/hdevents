@@ -21,11 +21,3 @@ Route::get('/contact', function() {
     return view('contact');
 });
 
-Route::get('/produtos/{id?}', function($id = null) {
-
-
-    return view('products', [
-        'id' => $id,
-        'busca' => request('search')
-    ]);
-});

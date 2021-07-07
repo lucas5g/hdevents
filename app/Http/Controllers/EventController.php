@@ -9,10 +9,20 @@ class EventController extends Controller
 {
     public function index()
     {
-        $events = Event::all();
+        $search = request('search');
+
+        if($search){
+            $events = Event::where([
+                ['title', 'like', '%'.$search.'%']
+            ])->get();
+        } else {
+            $events = Event::all();
+        }
 
         return view('welcome', [
-            'events' => $events
+            'events' => $events,
+            'search' => $search
+
         ]);
     }
 
@@ -43,6 +53,8 @@ class EventController extends Controller
         }
 
         // dd($event);
+        $event->user_id = auth()->user()->id;
+
         $event->save();
 
         return redirect('/')->with('msg', 'Evento criado com sucesso!');

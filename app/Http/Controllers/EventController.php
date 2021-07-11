@@ -65,12 +65,25 @@ class EventController extends Controller
     {
         $event = Event::findOrFail($id);
 
-        $eventOwner = User::where('id', $event->user_id)->first()->toArray();
+        $user = auth()->user();
+        $hasUserJoined = false;
 
+        if($user){
+            $userEvents = $user->eventsAsParticipant->toArray();
+
+            foreach($userEvents as $userEvent){
+                if($userEvent['id'] == $id){
+                    $hasUserJoined = true;
+                }
+            }
+        }
+
+        $eventOwner = User::where('id', $event->user_id)->first()->toArray();
         
         return view('events.show', [
             'event' => $event,
-            'eventOwner' => $eventOwner
+            'eventOwner' => $eventOwner,
+            'hasUserJoined' => $hasUserJoined
         ]);
     }
 
@@ -80,8 +93,11 @@ class EventController extends Controller
 
         $events = $user->events;
 
+        $eventsAsPartipant = $user->eventsAsParticipant;
+
         return view('events.dashboard', [
-            'events' => $events
+            'events' => $events,
+            'eventsasparticipant' => $eventsAsPartipant
         ]);
     }
 
@@ -94,10 +110,54 @@ class EventController extends Controller
 
     public function edit($id)
     {
-        $event = Event::findOrFail();
+        $event = Event::findOrFail($id);
+
+        // dd($event);
 
         return view('events.edit', [
             'event' => $event
         ]);
+    }
+
+    public function update(Request $request)
+    {
+
+        $data = $request->all();
+
+        if ($request->hasFile('image') && $request->file('image')->isValid()) {
+            $extension = $request->image->extension();
+
+            $imageName = md5($request->image->getClientOriginalName() . strtotime('now')) . '.' . $extension;
+
+            $request->image->move(public_path('img/events'), $imageName);
+
+            $data['image'] = $imageName;
+        }
+
+        Event::findOrFail($request->id)->update($data);
+
+        return redirect('/dashboard')->with('msg', 'Evento editado com sucesso!');
+    }
+
+    public function joinEvent($id)
+    {
+        $user = auth()->user();
+
+        $user->eventsAsParticipant()->attach($id);
+
+        $event = Event::findOrFail($id);
+
+        return redirect('/dashboard')->with('msg', 'Sua presença está confirmada no evento');
+    }
+
+    public function leaveEvent($id)
+    {
+        $user = auth()->user();
+
+        $user->eventsAsParticipant()->detach($id);
+
+        $event = Event::findOrFail($id);
+
+        return redirect('/dashboard')->with('msg', 'Você saiu com sucesso do evento: '.$event->title);
     }
 }
